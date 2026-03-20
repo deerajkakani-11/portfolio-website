@@ -109,16 +109,36 @@ export default function App() {
 
           </form>
 
+          {/* Social Links */}
           <div className="flex justify-center gap-6 mt-6">
-            <a href="#" className="hover:text-orange-400">GitHub</a>
-            <a href="#" className="hover:text-orange-400">LinkedIn</a>
+
+            <a 
+              href="https://github.com/deerajkakani-11" 
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-orange-400 transition"
+            >
+              🔗 GitHub
+            </a>
+
+            <a 
+              href="https://www.linkedin.com/in/deeraj-kakani-a4933a311" 
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-orange-400 transition"
+            >
+              💼 LinkedIn
+            </a>
+
           </div>
-        </div>
+
+        </div> {/* ✅ THIS WAS MISSING */}
+
       </section>
 
       {/* Footer */}
       <footer className="text-center mt-20 p-6 text-gray-500">
-        © 2026 Deearj Kumar
+        © 2026 Deeraj Kumar
       </footer>
 
     </div>
