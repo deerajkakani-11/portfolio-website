@@ -1,152 +1,240 @@
 import { motion } from "framer-motion";
+import emailjs from "@emailjs/browser";
+import { useRef, useState, useEffect } from "react";
+import Particles from "react-tsparticles";
+import { loadFull } from "tsparticles";
 
 export default function App() {
-  return (
-    <div className="bg-black text-white min-h-screen font-sans">
+  const form = useRef();
+  const [status, setStatus] = useState("");
+  const [active, setActive] = useState("home");
 
-      {/* Navbar */}
-      <nav className="flex justify-between items-center p-6 backdrop-blur-lg bg-white/5 border-b border-gray-800 sticky top-0 z-50">
-        <h1 className="text-xl font-bold text-orange-500">Deeraj Kumar</h1>
-        <ul className="flex gap-6 text-gray-300">
-          <li className="hover:text-orange-400 cursor-pointer">Home</li>
-          <li className="hover:text-orange-400 cursor-pointer">Skills</li>
-          <li className="hover:text-orange-400 cursor-pointer">Projects</li>
-          <li className="hover:text-orange-400 cursor-pointer">Contact</li>
-        </ul>
+  // EMAIL
+  const sendEmail = (e) => {
+    e.preventDefault();
+    setStatus("Sending...");
+
+    emailjs
+      .sendForm(
+        "service_iqo080r",
+        "template_npbwm8h",
+        form.current,
+        "HxKzO0DZV-0R0-lXz"
+      )
+      .then(() => {
+        setStatus("Message Sent 🚀");
+        form.current.reset();
+      })
+      .catch(() => setStatus("Failed ❌"));
+  };
+
+  // ACTIVE NAV
+  useEffect(() => {
+    const sections = document.querySelectorAll("section");
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActive(entry.target.id);
+          }
+        });
+      },
+      { threshold: 0.6 }
+    );
+
+    sections.forEach((sec) => observer.observe(sec));
+    return () => sections.forEach((sec) => observer.unobserve(sec));
+  }, []);
+
+  // PARTICLES
+  const particlesInit = async (main) => {
+    await loadFull(main);
+  };
+
+  return (
+    <div className="relative min-h-screen text-white overflow-hidden bg-gradient-to-br from-black via-[#0f172a] to-black">
+
+      {/* GLOW BG */}
+      <div className="fixed top-0 left-0 w-full h-full -z-10">
+        <div className="absolute w-96 h-96 bg-orange-500 blur-3xl opacity-20 top-20 left-10"></div>
+        <div className="absolute w-96 h-96 bg-purple-500 blur-3xl opacity-20 bottom-20 right-10"></div>
+      </div>
+
+      {/* PARTICLES */}
+      <Particles
+        init={particlesInit}
+        className="absolute -z-10"
+        options={{
+          particles: {
+            color: { value: "#ffffff" },
+            number: { value: 50 },
+            size: { value: 2 },
+            move: { speed: 1 },
+            links: {
+              enable: true,
+              distance: 150,
+              color: "#f97316",
+              opacity: 0.4,
+            },
+          },
+        }}
+      />
+
+      {/* NAVBAR */}
+      <nav className="fixed top-0 w-full z-50 backdrop-blur-lg bg-white/5 border-b border-white/10">
+        <div className="flex justify-between items-center p-6 max-w-6xl mx-auto">
+          <h1 className="text-xl font-bold text-orange-500">Deeraj</h1>
+
+          <ul className="flex gap-8">
+            {["home", "about", "projects", "contact"].map((item) => (
+              <li key={item}>
+                <a
+                  href={`#${item}`}
+                  className={`relative capitalize ${
+                    active === item ? "text-orange-500" : ""
+                  }`}
+                >
+                  {item}
+                  {active === item && (
+                    <motion.div
+                      layoutId="underline"
+                      className="absolute left-0 -bottom-1 h-[2px] w-full bg-orange-500"
+                    />
+                  )}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
       </nav>
 
-      {/* Hero */}
-      <motion.section
-        initial={{ opacity: 0, y: 80 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1 }}
-        className="text-center mt-32 px-6"
-      >
-        <h2 className="text-5xl font-bold bg-gradient-to-r from-orange-400 to-yellow-300 bg-clip-text text-transparent">
-          Software Engineer Intern
-        </h2>
+      {/* HERO */}
+      <section id="home" className="pt-40 text-center px-6">
 
-        <p className="mt-6 text-gray-400 text-lg">
-          Building intelligent and scalable solutions 🚀
+        <motion.h1
+          initial={{ opacity: 0, y: 100 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1 }}
+          className="text-6xl font-bold"
+        >
+          Deeraj Kumar
+        </motion.h1>
+
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="text-orange-400 mt-4 text-xl"
+        >
+          Software Engineer | AI Student 🚀
+        </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1 }}
+          className="mt-8"
+        >
+          <a href="/deeraj-resume.pdf" target="_blank"
+            className="border px-6 py-2 rounded-lg mr-4 hover:bg-orange-500 transition">
+            View Resume
+          </a>
+
+          <a href="/deeraj-resume.pdf" download
+            className="bg-orange-500 px-6 py-2 rounded-lg hover:bg-orange-600 transition">
+            Download
+          </a>
+        </motion.div>
+
+      </section>
+
+      {/* ABOUT */}
+      <motion.section
+        id="about"
+        className="mt-40 text-center px-6"
+        initial={{ opacity: 0, y: 100 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1 }}
+        viewport={{ once: true }}
+      >
+        <h2 className="text-3xl text-orange-400 mb-6">About Me</h2>
+        <p className="text-gray-400 max-w-xl mx-auto">
+          Pre-final year Computer Engineering & AI student passionate about building scalable software solutions using Java, Python, and modern web technologies.
         </p>
       </motion.section>
 
-      {/* Skills */}
-      <section className="mt-32 px-10">
-        <h2 className="text-3xl font-bold text-orange-400 mb-10 text-center">
-          Skills
-        </h2>
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-          {["Java", "Python", "React", "AI/ML"].map((skill, i) => (
-            <motion.div
-              key={i}
-              whileHover={{ scale: 1.1 }}
-              className="bg-white/5 backdrop-blur-lg border border-gray-800 p-6 rounded-xl text-center shadow-lg hover:shadow-orange-500/30 transition"
-            >
-              {skill}
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      {/* Projects */}
-      <section className="mt-32 px-10">
-        <h2 className="text-3xl font-bold text-orange-400 mb-10 text-center">
+      {/* PROJECTS */}
+      <motion.section
+        id="projects"
+        className="mt-40 px-6"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+        viewport={{ once: true }}
+      >
+        <h2 className="text-3xl text-orange-400 text-center mb-10">
           Projects
         </h2>
 
         <div className="grid md:grid-cols-3 gap-8">
-
-          <motion.div whileHover={{ scale: 1.05 }} className="bg-white/5 border border-gray-800 p-6 rounded-xl hover:shadow-orange-500/30 transition">
-            <h3 className="text-xl font-bold">AI Resume Analyzer</h3>
-            <p className="text-gray-400 mt-2">
-              AI-based system to analyze resumes and give feedback.
-            </p>
-          </motion.div>
-
-          <motion.div whileHover={{ scale: 1.05 }} className="bg-white/5 border border-gray-800 p-6 rounded-xl hover:shadow-orange-500/30 transition">
-            <h3 className="text-xl font-bold">Online Exam System</h3>
-            <p className="text-gray-400 mt-2">
-              Web-based platform for conducting online exams.
-            </p>
-          </motion.div>
-
-          <motion.div whileHover={{ scale: 1.05 }} className="bg-white/5 border border-gray-800 p-6 rounded-xl hover:shadow-orange-500/30 transition">
-            <h3 className="text-xl font-bold">Portfolio Website</h3>
-            <p className="text-gray-400 mt-2">
-              Personal portfolio built with React and Tailwind.
-            </p>
-          </motion.div>
-
-        </div>
-      </section>
-
-      {/* Contact */}
-      <section className="mt-32 px-10">
-        <h2 className="text-3xl font-bold text-orange-400 mb-10 text-center">
-          Contact
-        </h2>
-
-        <div className="max-w-xl mx-auto">
-
-          <form className="flex flex-col gap-4">
-
-            <input
-              type="text"
-              placeholder="Your Name"
-              className="p-3 rounded-lg bg-white/5 border border-gray-700"
-            />
-
-            <input
-              type="email"
-              placeholder="Your Email"
-              className="p-3 rounded-lg bg-white/5 border border-gray-700"
-            />
-
-            <textarea
-              placeholder="Your Message"
-              rows="4"
-              className="p-3 rounded-lg bg-white/5 border border-gray-700"
-            ></textarea>
-
-            <button className="bg-orange-500 p-3 rounded-lg hover:bg-orange-600 transition">
-              Send Message
-            </button>
-
-          </form>
-
-          {/* Social Links */}
-          <div className="flex justify-center gap-6 mt-8">
-
-            <a
-              href="https://github.com/deerajkakani-11"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-white/5 px-4 py-2 rounded-lg hover:bg-orange-500 transition"
+          {[
+            "AI-based Crop Recommendation System Using ML",
+            "Online Exam System",
+            "Stock Management System"
+          ].map((p, i) => (
+            <motion.div
+              key={i}
+              whileHover={{ scale: 1.08, rotate: 1 }}
+              className="bg-white/5 backdrop-blur-lg p-6 rounded-xl border border-white/10 
+              hover:shadow-orange-500/30 transition duration-300"
             >
-              🔗 GitHub
-            </a>
-
-            <a
-              href="https://www.linkedin.com/in/deeraj-kakani-a4933a311"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-white/5 px-4 py-2 rounded-lg hover:bg-orange-500 transition"
-            >
-              💼 LinkedIn
-            </a>
-
-          </div>
-
+              <h3 className="text-xl font-bold">{p}</h3>
+              <p className="text-gray-400 mt-2">
+                Modern scalable web application.
+              </p>
+            </motion.div>
+          ))}
         </div>
-      </section>
+      </motion.section>
 
-      {/* Footer */}
-      <footer className="text-center mt-20 p-6 text-gray-500 border-t border-gray-800">
+      {/* CONTACT */}
+      <motion.section
+        id="contact"
+        className="mt-40 px-6 text-center"
+        initial={{ opacity: 0, y: 100 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1 }}
+        viewport={{ once: true }}
+      >
+        <h2 className="text-3xl text-orange-400 mb-8">Contact Me</h2>
+
+        <form
+          ref={form}
+          onSubmit={sendEmail}
+          className="max-w-md mx-auto flex flex-col gap-4"
+        >
+          <input name="name" placeholder="Name" className="p-3 bg-black border rounded" required />
+          <input name="email" placeholder="Email" className="p-3 bg-black border rounded" required />
+          <textarea name="message" placeholder="Message" className="p-3 bg-black border rounded" required />
+
+          <button className="bg-orange-500 p-3 rounded-lg hover:bg-orange-600">
+            Send 🚀
+          </button>
+        </form>
+
+        <p className="mt-4 text-orange-400">{status}</p>
+
+        <div className="flex justify-center gap-8 mt-6">
+          <a href="https://github.com/deerajkakani-11" target="_blank">GitHub</a>
+          <a href="https://www.linkedin.com/in/deeraj-kakani-a4933a311" target="_blank">LinkedIn</a>
+        </div>
+      </motion.section>
+
+      {/* FOOTER */}
+      <footer className="text-center mt-20 p-6 text-gray-500">
         © 2026 Deeraj Kumar
       </footer>
-
     </div>
   );
 }
